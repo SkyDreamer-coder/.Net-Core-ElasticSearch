@@ -17,7 +17,7 @@ namespace Elasticsearch.API.Repositories
         {
             product.Created = DateTime.Now;
 
-            var response = await _client.IndexAsync(product, x=>x.Index("products"));
+            var response = await _client.IndexAsync(product, x => x.Index("products").Id(Guid.NewGuid().ToString()));
 
             if(!response.IsValid) return null;
 
