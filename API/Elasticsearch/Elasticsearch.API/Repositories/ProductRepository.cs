@@ -40,5 +40,18 @@ namespace Elasticsearch.API.Repositories
             return res.Documents.ToImmutableList();
 
         }
+        
+        public async Task<Product?> GetByIdAsync(string id)
+        {
+            var res = await _client.GetAsync<Product>(id, x => x.Index(indexName));
+
+            if (!res.IsValid)
+            {
+                return null;
+            }
+
+            res.Source.Id = res.Id;
+            return res.Source;
+        }
     }
 }
