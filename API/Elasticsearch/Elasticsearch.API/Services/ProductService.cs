@@ -10,9 +10,9 @@ namespace Elasticsearch.API.Services
     public class ProductService
     {
         private readonly ProductRepository _repository;
-        private readonly ILogger _logger;
+        private readonly ILogger<ProductService> _logger;
 
-        public ProductService(ProductRepository repository, ILogger logger)
+        public ProductService(ProductRepository repository, ILogger<ProductService> logger)
         {
             _repository = repository;
             _logger = logger;
