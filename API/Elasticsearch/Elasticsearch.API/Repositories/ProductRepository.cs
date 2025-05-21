@@ -1,4 +1,5 @@
-﻿using Elasticsearch.API.Models;
+﻿using Elasticsearch.API.DTOs;
+using Elasticsearch.API.Models;
 using Nest;
 using System.Collections.Immutable;
 
@@ -52,6 +53,13 @@ namespace Elasticsearch.API.Repositories
 
             res.Source.Id = res.Id;
             return res.Source;
+        }
+
+        public async Task<bool> UpdateAsync(ProductUpdateDto updateDto)
+        {
+            var res = await _client.UpdateAsync<Product, ProductUpdateDto>(updateDto.id, x=>x.Index(indexName).Doc(updateDto));
+
+            return res.IsValid;
         }
     }
 }
