@@ -2,6 +2,7 @@
 using Elasticsearch.API.Models;
 using Elasticsearch.API.Repositories;
 using System.Collections.Immutable;
+using Nest;
 using System.Net;
 
 namespace Elasticsearch.API.Services
@@ -9,10 +10,12 @@ namespace Elasticsearch.API.Services
     public class ProductService
     {
         private readonly ProductRepository _repository;
+        private readonly ILogger _logger;
 
-        public ProductService(ProductRepository repository)
+        public ProductService(ProductRepository repository, ILogger logger)
         {
             _repository = repository;
+            _logger = logger;
         }
 
         public async Task<ResponseDto<ProductDto>> SaveAsync(ProductCreateDto req)
@@ -79,14 +82,19 @@ namespace Elasticsearch.API.Services
 
         public async Task<ResponseDto<bool>> DeleteAsync(string id)
         {
-            var hasDeleted = await _repository.DeleteAsync(id);
+            var deleteResponse = await _repository.DeleteAsync(id);
 
-            if (!hasDeleted)
+            if (!deleteResponse.IsValid && deleteResponse.Result == Result.NotFound)
             {
+                return ResponseDto<bool>.Fail(new List<string> { "silinmek istenen item bulunamadı." }, HttpStatusCode.NotFound);
+            }
+            if (!deleteResponse.IsValid)
+            {
+                _logger.LogError(deleteResponse.OriginalException, deleteResponse.ServerError.Error.ToString());
                 return ResponseDto<bool>.Fail(new List<string> { "silme esnasında hata meydana geldi." }, HttpStatusCode.InternalServerError);
             }
 
-            return ResponseDto<bool>.Success(hasDeleted, HttpStatusCode.NoContent);
+            return ResponseDto<bool>.Success(true, HttpStatusCode.NoContent);
         }
     }
 }
