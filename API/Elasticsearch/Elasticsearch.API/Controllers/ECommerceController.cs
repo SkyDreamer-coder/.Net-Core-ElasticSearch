@@ -1,5 +1,4 @@
 ﻿using Elasticsearch.API.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Elasticsearch.API.Controllers
@@ -30,6 +29,12 @@ namespace Elasticsearch.API.Controllers
         public async Task<IActionResult> PrefixQuery(string input)
         {
             return CreateActionResult(await _service.PrefixQuery(input));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RangeQuery(double beginPrice, double endPrice)
+        {
+            return CreateActionResult(await _service.RangeQueryAsync(beginPrice, endPrice));
         }
     }
 }

@@ -1,9 +1,6 @@
 ﻿using Elastic.Clients.Elasticsearch;
-using Elastic.Clients.Elasticsearch.Core.Search;
 using Elastic.Clients.Elasticsearch.QueryDsl;
-using Elasticsearch.API.Extensions;
 using Elasticsearch.API.Models.ECommerceModel;
-using System.Collections;
 using System.Collections.Immutable;
 
 namespace Elasticsearch.API.Repositories
@@ -89,6 +86,19 @@ namespace Elasticsearch.API.Repositories
             p.Field(f => 
             f.CustomerFullName.Suffix("keyword"))
             .Value(input))));
+
+            foreach (var item in res.Hits) item.Source.Id = item.Id;
+
+            return res.Documents.ToImmutableList();
+        }
+
+        public async Task<IImmutableList<ECommerce>> RangeQueryAsync(double beginPrice, double endPrice)
+        {
+            var res = await _client.SearchAsync<ECommerce>(s => s.Index(indexName)
+            .Query(q => q
+            .Range(r => r.NumberRange(n => n
+            .Field(f => f.TaxFulTotalPrice)
+            .Gte(beginPrice).Lte(endPrice)))));
 
             foreach (var item in res.Hits) item.Source.Id = item.Id;
 

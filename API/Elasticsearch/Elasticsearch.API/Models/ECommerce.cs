@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Elasticsearch.API.Models.ECommerceModel
 {
@@ -17,6 +16,9 @@ namespace Elasticsearch.API.Models.ECommerceModel
         [JsonPropertyName("customer_full_name")]
         public string CustomerFullName { get; set; } = null!;
         
+        [JsonPropertyName("taxful_total_price")]
+        public double TaxFulTotalPrice { get; set; }
+
         [JsonPropertyName("category")]
         public string[] Category { get; set; } = null!;
 

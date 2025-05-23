@@ -1,7 +1,7 @@
-﻿using Elasticsearch.API.Models.ECommerceModel;
+﻿using Elasticsearch.API.DTOs;
+using Elasticsearch.API.Models.ECommerceModel;
 using Elasticsearch.API.Repositories;
 using System.Collections.Immutable;
-using Elasticsearch.API.DTOs;
 
 
 namespace Elasticsearch.API.Services
@@ -32,6 +32,12 @@ namespace Elasticsearch.API.Services
         public async Task<ResponseDto<IImmutableList<ECommerce>>> PrefixQuery(string input)
         {
             var res = await _repository.PrefixQueryAsync(input);
+            return ResponseDto<IImmutableList<ECommerce>>.Success(res, System.Net.HttpStatusCode.OK);
+        }
+
+        public async Task<ResponseDto<IImmutableList<ECommerce>>> RangeQueryAsync(double beginPrice, double endPrice)
+        {
+            var res = await _repository.RangeQueryAsync(beginPrice, endPrice);
             return ResponseDto<IImmutableList<ECommerce>>.Success(res, System.Net.HttpStatusCode.OK);
         }
     }
