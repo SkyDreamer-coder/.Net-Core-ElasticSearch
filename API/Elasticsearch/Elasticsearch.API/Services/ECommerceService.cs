@@ -19,13 +19,19 @@ namespace Elasticsearch.API.Services
 
         public async Task<ResponseDto<IImmutableList<ECommerce>>> TermLevelQuery(string customerFirstName)
         {
-            var res = await _repository.TermLevelQuery(customerFirstName);
+            var res = await _repository.TermLevelQueryAsync(customerFirstName);
             return ResponseDto<IImmutableList<ECommerce>>.Success(res, System.Net.HttpStatusCode.OK);
         }
 
         public async Task<ResponseDto<IImmutableList<ECommerce>>> TermsQuery(List<string> customerFirstNameList)
         {
-            var res = await _repository.TermsQuery(customerFirstNameList);
+            var res = await _repository.TermsQueryAsync(customerFirstNameList);
+            return ResponseDto<IImmutableList<ECommerce>>.Success(res, System.Net.HttpStatusCode.OK);
+        }
+
+        public async Task<ResponseDto<IImmutableList<ECommerce>>> PrefixQuery(string input)
+        {
+            var res = await _repository.PrefixQueryAsync(input);
             return ResponseDto<IImmutableList<ECommerce>>.Success(res, System.Net.HttpStatusCode.OK);
         }
     }

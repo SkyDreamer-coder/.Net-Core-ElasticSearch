@@ -25,5 +25,11 @@ namespace Elasticsearch.API.Controllers
         {
             return CreateActionResult(await _service.TermsQuery(customerFirstNameList));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> PrefixQuery(string input)
+        {
+            return CreateActionResult(await _service.PrefixQuery(input));
+        }
     }
 }

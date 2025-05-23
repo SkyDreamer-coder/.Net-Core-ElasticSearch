@@ -18,7 +18,7 @@ namespace Elasticsearch.API.Repositories
             _client = client;
         }
 
-        public async Task<IImmutableList<ECommerce>> TermLevelQuery(string customerFirstName)
+        public async Task<IImmutableList<ECommerce>> TermLevelQueryAsync(string customerFirstName)
         {
             #region Unsecured Way
             // unsecured way
@@ -45,7 +45,7 @@ namespace Elasticsearch.API.Repositories
             return res.Documents.ToImmutableList();
         }
 
-        public async Task<IImmutableList<ECommerce>> TermsQuery(List<string> customerFirstNameList)
+        public async Task<IImmutableList<ECommerce>> TermsQueryAsync(List<string> customerFirstNameList)
         {
             List<FieldValue> terms = new List<FieldValue>();
             customerFirstNameList.ForEach(x =>
@@ -81,5 +81,18 @@ namespace Elasticsearch.API.Repositories
             return res.Documents.ToImmutableList();
         }
 
+        public async Task<IImmutableList<ECommerce>> PrefixQueryAsync(string input)
+        {
+            var res = await _client.SearchAsync<ECommerce>(s => s.Index(indexName)
+            .Query(q => 
+            q.Prefix(p => 
+            p.Field(f => 
+            f.CustomerFullName.Suffix("keyword"))
+            .Value(input))));
+
+            foreach (var item in res.Hits) item.Source.Id = item.Id;
+
+            return res.Documents.ToImmutableList();
+        }
     }
 }
