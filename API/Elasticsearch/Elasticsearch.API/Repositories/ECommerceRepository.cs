@@ -150,5 +150,17 @@ namespace Elasticsearch.API.Repositories
             return res.Documents.ToImmutableList();
         }
 
+        
+        public async Task<IImmutableList<ECommerce>> MatchQueryFullTextAsync(string categoryName)
+        {
+            var res = await _client.SearchAsync<ECommerce>(s => s.Index(indexName)
+            .Query(q => q
+            .Match(m => m
+            .Field(f => f.Category)
+            .Query(categoryName)))); // not value but query and its score
+            res.ApplyMetaIds();
+
+            return res.Documents.ToImmutableList();
+        }
     }
 }

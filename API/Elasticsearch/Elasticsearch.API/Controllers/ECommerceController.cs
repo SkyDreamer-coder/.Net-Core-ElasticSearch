@@ -54,5 +54,11 @@ namespace Elasticsearch.API.Controllers
         {
             return CreateActionResult(await _service.FuzzyQueryAsync(customerFirstName));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> MatchQueryFullText(string categoryName)
+        {
+            return CreateActionResult(await _service.MatchQueryFullTextAsync(categoryName));
+        }
     }
 }
