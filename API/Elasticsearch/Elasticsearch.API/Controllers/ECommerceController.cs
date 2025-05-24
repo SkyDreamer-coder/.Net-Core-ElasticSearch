@@ -36,5 +36,11 @@ namespace Elasticsearch.API.Controllers
         {
             return CreateActionResult(await _service.RangeQueryAsync(beginPrice, endPrice));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> MactchAllQuery()
+        {
+            return CreateActionResult(await _service.MactchAllQueryAsync());
+        }
     }
 }

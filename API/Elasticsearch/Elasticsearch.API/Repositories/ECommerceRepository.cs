@@ -1,6 +1,7 @@
 ﻿using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.QueryDsl;
 using Elasticsearch.API.Models.ECommerceModel;
+using Elasticsearch.API.Repositories.Extensions;
 using System.Collections.Immutable;
 
 namespace Elasticsearch.API.Repositories
@@ -37,7 +38,8 @@ namespace Elasticsearch.API.Repositories
             var res = await _client.SearchAsync<ECommerce>(s => s.Index(indexName).Query(termQuery));
             #endregion
 
-            foreach (var item in res.Hits) item.Source.Id = item.Id;
+            res.ApplyMetaIds();
+            //foreach (var item in res.Hits) item.Source.Id = item.Id;
 
             return res.Documents.ToImmutableList();
         }
@@ -73,7 +75,8 @@ namespace Elasticsearch.API.Repositories
             .Terms(new TermsQueryField(terms.AsReadOnly())))));
             #endregion
 
-            foreach (var item in res.Hits) item.Source.Id = item.Id;
+            res.ApplyMetaIds();
+            //foreach (var item in res.Hits) item.Source.Id = item.Id;
 
             return res.Documents.ToImmutableList();
         }
@@ -87,7 +90,8 @@ namespace Elasticsearch.API.Repositories
             f.CustomerFullName.Suffix("keyword"))
             .Value(input))));
 
-            foreach (var item in res.Hits) item.Source.Id = item.Id;
+            res.ApplyMetaIds();
+            //foreach (var item in res.Hits) item.Source.Id = item.Id;
 
             return res.Documents.ToImmutableList();
         }
@@ -100,7 +104,18 @@ namespace Elasticsearch.API.Repositories
             .Field(f => f.TaxFulTotalPrice)
             .Gte(beginPrice).Lte(endPrice)))));
 
-            foreach (var item in res.Hits) item.Source.Id = item.Id;
+            res.ApplyMetaIds();
+            //foreach (var item in res.Hits) item.Source.Id = item.Id;
+
+            return res.Documents.ToImmutableList();
+        }
+
+        public async Task<IImmutableList<ECommerce>> MactchAllQueryAsync()
+        {
+            var res = await _client.SearchAsync<ECommerce>(s => s.Index(indexName)
+            .Size(100)
+            .Query(q => q.MatchAll()));
+            res.ApplyMetaIds();
 
             return res.Documents.ToImmutableList();
         }
