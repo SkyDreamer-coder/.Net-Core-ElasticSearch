@@ -42,5 +42,11 @@ namespace Elasticsearch.API.Controllers
         {
             return CreateActionResult(await _service.MactchAllQueryAsync());
         }
+
+        [HttpGet]
+        public async Task<IActionResult> WildCardQuery(string customerFullName)
+        {
+            return CreateActionResult(await _service.WildCardQueryAsync(customerFullName));
+        }
     }
 }
