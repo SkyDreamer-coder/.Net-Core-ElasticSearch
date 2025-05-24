@@ -4,12 +4,7 @@ using System.Reflection;
 namespace Elasticsearch.API.Repositories.Extensions
 {
     public static class MetaIdExtension
-    {
-
-        /*public static IEnumerable<string> AddMetaId(this SearchResponse<T> response)
-        {
-            foreach (var item in response.Hits) yield return item.Id;
-        }*/
+    {      
 
         public static void ApplyMetaIds<T>(this SearchResponse<T> response, string propertyName = "Id") where T : class
         {

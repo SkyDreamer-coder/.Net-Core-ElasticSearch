@@ -52,5 +52,12 @@ namespace Elasticsearch.API.Services
             var res = await _repository.WildCardQueryAsync(customerFullName);
             return ResponseDto<IImmutableList<ECommerce>>.Success(res, System.Net.HttpStatusCode.OK);
         }
+
+        public async Task<ResponseDto<IImmutableList<ECommerce>>> FuzzyQueryAsync(string customerFirstName)
+        {
+            var res = await _repository.FuzzyQueryAsync(customerFirstName);
+            return ResponseDto<IImmutableList<ECommerce>>.Success(res, System.Net.HttpStatusCode.OK);
+        }
+
     }
 }
