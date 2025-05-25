@@ -60,5 +60,11 @@ namespace Elasticsearch.API.Controllers
         {
             return CreateActionResult(await _service.MatchQueryFullTextAsync(categoryName));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> MatchBoolPrefix(string customerFullName)
+        {
+            return CreateActionResult(await _service.MatchBoolPrefixAsync(customerFullName));
+        }
     }
 }

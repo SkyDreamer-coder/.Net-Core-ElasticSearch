@@ -162,5 +162,19 @@ namespace Elasticsearch.API.Repositories
 
             return res.Documents.ToImmutableList();
         }
+
+        public async Task<IImmutableList<ECommerce>> MatchBoolPrefixAsync(string customerFullName)
+        {
+            var res = await _client.SearchAsync<ECommerce>(s => s.Index(indexName)
+            .Size(100)
+            .Query(q => q
+            .MatchBoolPrefix(m => m
+            .Field(f => f.CustomerFullName)
+            .Query(customerFullName)))); // not value but query and its score
+            res.ApplyMetaIds();
+
+            return res.Documents.ToImmutableList();
+        }
+
     }
 }
