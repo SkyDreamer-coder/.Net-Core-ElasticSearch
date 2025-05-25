@@ -72,5 +72,12 @@ namespace Elasticsearch.API.Services
             return ResponseDto<IImmutableList<ECommerce>>.Success(res, System.Net.HttpStatusCode.OK);
         }
 
+        public async Task<ResponseDto<IImmutableList<ECommerce>>> MatchPhraseAsync(string customerFullName)
+        {
+            var res = await _repository.MatchPhraseAsync(customerFullName);
+            return ResponseDto<IImmutableList<ECommerce>>.Success(res, System.Net.HttpStatusCode.OK);
+        }
+
+
     }
 }
