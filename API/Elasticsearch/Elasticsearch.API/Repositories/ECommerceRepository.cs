@@ -32,8 +32,11 @@ namespace Elasticsearch.API.Repositories
 
             #region Advanced Way
             // advanced way
-            var termQuery = new TermQuery("customer_first_name.keyword") { Value = customerFirstName,
-            CaseInsensitive=true};
+            var termQuery = new TermQuery("customer_first_name.keyword")
+            {
+                Value = customerFirstName,
+                CaseInsensitive = true
+            };
 
             var res = await _client.SearchAsync<ECommerce>(s => s.Index(indexName).Query(termQuery));
             #endregion
@@ -84,9 +87,9 @@ namespace Elasticsearch.API.Repositories
         public async Task<IImmutableList<ECommerce>> PrefixQueryAsync(string input)
         {
             var res = await _client.SearchAsync<ECommerce>(s => s.Index(indexName)
-            .Query(q => 
-            q.Prefix(p => 
-            p.Field(f => 
+            .Query(q =>
+            q.Prefix(p =>
+            p.Field(f =>
             f.CustomerFullName.Suffix("keyword"))
             .Value(input))));
 
@@ -142,15 +145,15 @@ namespace Elasticsearch.API.Repositories
             .Field(f => f.CustomerFirstName
             .Suffix("keyword"))
             .Value(customerFirstName).Fuzziness(new Fuzziness(1)))) // Fuzzy amount
-            .Sort(sort=>sort
-            .Field(f=>f.TaxFulTotalPrice, new FieldSort() { Order=SortOrder.Desc}))); 
+            .Sort(sort => sort
+            .Field(f => f.TaxFulTotalPrice, new FieldSort() { Order = SortOrder.Desc })));
 
             res.ApplyMetaIds();
 
             return res.Documents.ToImmutableList();
         }
 
-        
+
         public async Task<IImmutableList<ECommerce>> MatchQueryFullTextAsync(string categoryName)
         {
             var res = await _client.SearchAsync<ECommerce>(s => s.Index(indexName)
@@ -184,6 +187,62 @@ namespace Elasticsearch.API.Repositories
             .MatchPhrase(m => m
             .Field(f => f.CustomerFullName)
             .Query(customerFullName)))); // not value but query and its score
+            res.ApplyMetaIds();
+
+            return res.Documents.ToImmutableList();
+        }
+
+        public async Task<IImmutableList<ECommerce>> CompoundQueryV1Async(string cityName, string categoryName, double totalTaxfullRange, string manufacturer)
+        {
+            var res = await _client.SearchAsync<ECommerce>(s => s.Index(indexName)
+            .Size(100)
+                .Query(q => q
+                    .Bool(b => b
+                        .Must(m => m
+                            .Term(t => t
+                                .Field("geoip.city_name").Value(cityName)))
+                        .MustNot(mn => mn
+                            .Range(r => r
+                                .NumberRange(nr => nr
+                                    .Field(f => f.TaxFulTotalPrice).Lte(totalTaxfullRange))))
+                        .Should(s => s
+                            .Term(t => t
+                                .Field(f => f.Category.Suffix("keyword")).Value(categoryName)))
+                        .Filter(f => f
+                            .Term(t => t
+                                .Field("manufacturer.keyword").Value(manufacturer))))));
+
+            res.ApplyMetaIds();
+
+            return res.Documents.ToImmutableList();
+        }
+
+        public async Task<IImmutableList<ECommerce>> CompoundQueryV2Async(string customerFullName)
+        {
+
+            #region first way
+            // first way
+            /*var res = await _client.SearchAsync<ECommerce>(s => s.Index(indexName)
+                        .Size(100)
+                            .Query(q => q
+                                .Bool(b => b
+                                    .Should(s => s
+                                        .Match(m => m
+                                            .Field(f => f.CustomerFullName).Query(customerFullName))
+                                        .Prefix(p => p
+                                            .Field(f => f.CustomerFullName.Suffix("keyword")).Value(customerFullName))))));*/
+            #endregion
+
+            #region second (advanced way)
+            // second advanced way
+            var res = await _client.SearchAsync<ECommerce>(s => s.Index(indexName)
+                        .Size(100)
+                            .Query(q => q
+                                .MatchPhrasePrefix(m => m
+                                    .Field(f => f.CustomerFullName)
+                                    .Query(customerFullName))));
+            #endregion
+
             res.ApplyMetaIds();
 
             return res.Documents.ToImmutableList();

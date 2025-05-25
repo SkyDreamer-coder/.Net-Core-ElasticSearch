@@ -72,5 +72,17 @@ namespace Elasticsearch.API.Controllers
         {
             return CreateActionResult(await _service.MatchPhraseAsync(customerFullName));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> CompoundQueryV1(string cityName, string categoryName, double totalTaxfullRange, string manufacturer)
+        {
+            return CreateActionResult(await _service.CompoundQueryV1Async(cityName, categoryName, totalTaxfullRange, manufacturer));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CompoundQueryV2(string customerFullName)
+        {
+            return CreateActionResult(await _service.CompoundQueryV2Async(customerFullName));
+        }
     }
 }

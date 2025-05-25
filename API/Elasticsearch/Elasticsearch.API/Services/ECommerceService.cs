@@ -78,6 +78,18 @@ namespace Elasticsearch.API.Services
             return ResponseDto<IImmutableList<ECommerce>>.Success(res, System.Net.HttpStatusCode.OK);
         }
 
+        public async Task<ResponseDto<IImmutableList<ECommerce>>> CompoundQueryV1Async(string cityName, string categoryName, double totalTaxfullRange, string manufacturer)
+        {
+            var res = await _repository.CompoundQueryV1Async(cityName, categoryName, totalTaxfullRange, manufacturer);
+            return ResponseDto<IImmutableList<ECommerce>>.Success(res, System.Net.HttpStatusCode.OK);
+        }
+
+        public async Task<ResponseDto<IImmutableList<ECommerce>>> CompoundQueryV2Async(string customerFullName)
+        {
+            var res = await _repository.CompoundQueryV2Async(customerFullName);
+            return ResponseDto<IImmutableList<ECommerce>>.Success(res, System.Net.HttpStatusCode.OK);
+        }
+
 
     }
 }
