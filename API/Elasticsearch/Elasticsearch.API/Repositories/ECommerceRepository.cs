@@ -166,6 +166,21 @@ namespace Elasticsearch.API.Repositories
             return res.Documents.ToImmutableList();
         }
 
+        public async Task<IImmutableList<ECommerce>> MultiMatchQueryFullTextAsync(string name)
+        {
+            var res = await _client.SearchAsync<ECommerce>(s => s.Index(indexName)
+            .Query(q => q
+                .MultiMatch(m => m
+                    .Fields(new Field("customer_first_name")
+                    .And(new Field("customer_last_name"))
+                    .And(new Field("customer_full_name"))).Query(name))));
+            
+
+            res.ApplyMetaIds();
+
+            return res.Documents.ToImmutableList();
+        }
+
         public async Task<IImmutableList<ECommerce>> MatchBoolPrefixAsync(string customerFullName)
         {
             var res = await _client.SearchAsync<ECommerce>(s => s.Index(indexName)

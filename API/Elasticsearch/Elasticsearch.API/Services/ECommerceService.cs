@@ -47,6 +47,12 @@ namespace Elasticsearch.API.Services
             return ResponseDto<IImmutableList<ECommerce>>.Success(res, System.Net.HttpStatusCode.OK);
         }
 
+        public async Task<ResponseDto<IImmutableList<ECommerce>>> MultiMatchQueryFullTextAsync(string name)
+        {
+            var res = await _repository.MultiMatchQueryFullTextAsync(name);
+            return ResponseDto<IImmutableList<ECommerce>>.Success(res, System.Net.HttpStatusCode.OK);
+        }
+
         public async Task<ResponseDto<IImmutableList<ECommerce>>> WildCardQueryAsync(string customerFullName) 
         {
             var res = await _repository.WildCardQueryAsync(customerFullName);
