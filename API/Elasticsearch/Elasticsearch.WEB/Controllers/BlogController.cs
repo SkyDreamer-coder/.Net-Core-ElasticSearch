@@ -1,6 +1,7 @@
 ﻿using Elasticsearch.WEB.Services;
 using Elasticsearch.WEB.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Elasticsearch.WEB.Models;
 
 namespace Elasticsearch.WEB.Controllers
 {
@@ -19,6 +20,11 @@ namespace Elasticsearch.WEB.Controllers
             return View();
         }
 
+        public async Task<IActionResult> Search()
+        {
+            return View(await _service.SearchAsync(string.Empty));
+        }
+
         [HttpPost]
         public async Task<IActionResult> Save(BlogCreateViewModel model)
         {
@@ -30,6 +36,13 @@ namespace Elasticsearch.WEB.Controllers
             }
             TempData["result"] = "kayıt başarılı";
             return RedirectToAction(nameof(BlogController.Save));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Search(string searchText)
+        {
+            ViewBag.searchText = searchText;
+            return View(await _service.SearchAsync(searchText));
         }
     }
 }

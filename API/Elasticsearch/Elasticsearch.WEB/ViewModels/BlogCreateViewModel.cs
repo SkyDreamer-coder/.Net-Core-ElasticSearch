@@ -11,8 +11,9 @@ namespace Elasticsearch.WEB.ViewModels
         [Display(Name = "Blog Content")]
         [Required]
         public string Content { get; set; } = null!;
-
+        
         [Display(Name = "Blog Tags")]
+        [Required]
         public string Tags { get; set; } = null!;
 
     }
