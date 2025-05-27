@@ -13,7 +13,7 @@ namespace Elasticsearch.WEB.Repositories
             _client = client;
         }
 
-        public async Task<Blog?> Save(Blog newBlog)
+        public async Task<Blog?> SaveAsync(Blog newBlog)
         {
             newBlog.Created = DateTime.Now;
 
