@@ -1,7 +1,7 @@
 ﻿using Elastic.Clients.Elasticsearch;
 using System.Reflection;
 
-namespace Elasticsearch.API.Repositories.Extensions
+namespace Elasticsearch.WEB.Repositories.Extensions
 {
     public static class MetaIdExtension
     {      

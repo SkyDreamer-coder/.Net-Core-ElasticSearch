@@ -1,6 +1,6 @@
 ﻿using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.QueryDsl;
-using Elasticsearch.API.Repositories.Extensions;
+using Elasticsearch.WEB.Repositories.Extensions;
 using Elasticsearch.WEB.Models;
 
 namespace Elasticsearch.WEB.Repositories
