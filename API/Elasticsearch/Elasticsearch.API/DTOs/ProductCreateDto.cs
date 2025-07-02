@@ -10,7 +10,7 @@ namespace Elasticsearch.API.DTOs
                 Name = Name, 
                 Price = Price, 
                 Stock = Stock, 
-                Feature = new ProductFeature { Width=Feature.Width, Height=Feature.Height, Color=Feature.Color} 
+                Feature = new ProductFeature { Width=Feature.Width, Height=Feature.Height, Color=(Colors)int.Parse(Feature.Color)} 
             };
         }
     }

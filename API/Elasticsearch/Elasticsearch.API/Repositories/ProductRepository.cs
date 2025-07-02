@@ -1,6 +1,6 @@
-﻿using Elasticsearch.API.DTOs;
+﻿using Elastic.Clients.Elasticsearch;
+using Elasticsearch.API.DTOs;
 using Elasticsearch.API.Models;
-using Nest;
 using System.Collections.Immutable;
 
 namespace Elasticsearch.API.Repositories
@@ -8,10 +8,10 @@ namespace Elasticsearch.API.Repositories
     public class ProductRepository
     {
 
-        private readonly ElasticClient _client;
+        private readonly ElasticsearchClient _client;
         private const string indexName = "products";
 
-        public ProductRepository(ElasticClient client)
+        public ProductRepository(ElasticsearchClient client)
         {
             _client = client;
         }
@@ -22,7 +22,7 @@ namespace Elasticsearch.API.Repositories
 
             var response = await _client.IndexAsync(product, x => x.Index(indexName).Id(Guid.NewGuid().ToString()));
 
-            if(!response.IsValid) return null;
+            if(!response.IsValidResponse) return null;
 
             product.Id = response.Id;
             
@@ -33,8 +33,8 @@ namespace Elasticsearch.API.Repositories
         {
 
             var res = await _client.SearchAsync<Product>(
-                s => s.Index(indexName)
-                .Query(q => q.MatchAll()));
+                s => s.Index(indices: indexName)
+                .Query(q => q.MatchAll())) ;
 
             foreach(var hit in res.Hits) hit.Source.Id = hit.Id;
 
@@ -46,7 +46,7 @@ namespace Elasticsearch.API.Repositories
         {
             var res = await _client.GetAsync<Product>(id, x => x.Index(indexName));
 
-            if (!res.IsValid)
+            if (!res.IsValidResponse)
             {
                 return null;
             }
@@ -57,10 +57,10 @@ namespace Elasticsearch.API.Repositories
 
         public async Task<bool> UpdateAsync(ProductUpdateDto updateDto)
         {
-            var res = await _client.UpdateAsync<Product, ProductUpdateDto>(updateDto.id, x=>x.Index(indexName).Doc(updateDto));
+            var res = await _client.UpdateAsync<Product, ProductUpdateDto>(indexName, updateDto.Id, x => x.Doc(updateDto));
 
-            return res.IsValid;
-        }
+            return res.IsValidResponse;
+        }     
 
         public async Task<DeleteResponse> DeleteAsync(string id)
         {

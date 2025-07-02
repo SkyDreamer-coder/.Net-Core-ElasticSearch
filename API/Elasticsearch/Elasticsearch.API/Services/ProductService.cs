@@ -1,8 +1,9 @@
-﻿using Elasticsearch.API.DTOs;
+﻿using Elastic.Clients.Elasticsearch;
+using Elastic.Clients.Elasticsearch.IndexManagement;
+using Elasticsearch.API.DTOs;
 using Elasticsearch.API.Models;
 using Elasticsearch.API.Repositories;
 using System.Collections.Immutable;
-using Nest;
 using System.Net;
 
 namespace Elasticsearch.API.Services
@@ -49,7 +50,7 @@ namespace Elasticsearch.API.Services
                 else
                 {
                     productListDto.Add(new ProductDto(x.Id, x.Name, x.Price, x.Stock, new ProductFeatureDto
-                (x.Feature!.Width, x.Feature.Height, x.Feature.Color)));
+                (x.Feature!.Width, x.Feature.Height, x.Feature.Color.ToString())));
                 }
                 
             }
@@ -69,7 +70,7 @@ namespace Elasticsearch.API.Services
         }
 
         public async Task<ResponseDto<bool>> UpdateAsync(ProductUpdateDto updateDto)
-        {
+        {            
             var hasCompleted = await _repository.UpdateAsync(updateDto);
 
             if (!hasCompleted)
@@ -84,13 +85,14 @@ namespace Elasticsearch.API.Services
         {
             var deleteResponse = await _repository.DeleteAsync(id);
 
-            if (!deleteResponse.IsValid && deleteResponse.Result == Result.NotFound)
+            if (!deleteResponse.IsValidResponse && deleteResponse.Result == Result.NotFound)
             {
                 return ResponseDto<bool>.Fail(new List<string> { "silinmek istenen item bulunamadı." }, HttpStatusCode.NotFound);
             }
-            if (!deleteResponse.IsValid)
+            if (!deleteResponse.IsValidResponse)
             {
-                _logger.LogError(deleteResponse.OriginalException, deleteResponse.ServerError.Error.ToString());
+                deleteResponse.TryGetOriginalException(out var originalException);
+                _logger.LogError(originalException, deleteResponse.ElasticsearchServerError?.Error.ToString());
                 return ResponseDto<bool>.Fail(new List<string> { "silme esnasında hata meydana geldi." }, HttpStatusCode.InternalServerError);
             }
 
